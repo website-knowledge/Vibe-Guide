@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vibe Guide · คู่มือสั่ง AI สร้างเว็บไซต์</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<style>
+/* ===== Tokens: light ===== */
+:root{
+  --bg-1:#EEF2FF; --bg-2:#F5F3FF;
+  --blob-a:rgba(125,211,252,.45); --blob-b:rgba(196,181,253,.45); --blob-c:rgba(165,243,252,.35);
+  --card:rgba(255,255,255,.66); --card-strong:rgba(255,255,255,.88); --inset:rgba(238,242,255,.7);
+  --line:rgba(99,102,241,.12); --line-2:rgba(99,102,241,.22);
+  --ink:#1E1B3A; --ink-2:#475069; --muted:#8A90A8;
+  --good:#059669; --bad:#DC2626; --warn:#D97706;
+  --code-bg:#1B1F3B; --code-ink:#E0E7FF;
+  --shadow:0 18px 40px -22px rgba(79,70,229,.35);
+  --tag-idea:#B45309; --tag-idea-bg:#FEF3C7;
+  --tag-todo:#047857; --tag-todo-bg:#D1FAE5;
+  --tag-q:#1D4ED8;   --tag-q-bg:#DBEAFE;
+  --tag-star:#BE123C;--tag-star-bg:#FFE4E6;
+  color-scheme:light;
+}
+/* ===== Tokens: dark (system) ===== */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg-1:#0B0E1E; --bg-2:#120F26;
+    --blob-a:rgba(56,189,248,.16); --blob-b:rgba(139,92,246,.20); --blob-c:rgba(34,211,238,.10);
+    --card:rgba(26,30,56,.62); --card-strong:rgba(32,36,66,.92); --inset:rgba(15,18,38,.6);
+    --line:rgba(165,180,252,.12); --line-2:rgba(165,180,252,.22);
+    --ink:#EEF0FF; --ink-2:#C3C8E4; --muted:#8990B3;
+    --good:#34D399; --bad:#F87171; --warn:#FBBF24;
+    --code-bg:#070916; --code-ink:#E0E7FF;
+    --shadow:0 18px 40px -22px rgba(0,0,0,.8);
+    --tag-idea:#FCD34D; --tag-idea-bg:rgba(252,211,77,.12);
+    --tag-todo:#6EE7B7; --tag-todo-bg:rgba(110,231,183,.12);
+    --tag-q:#93C5FD;   --tag-q-bg:rgba(147,197,253,.12);
+    --tag-star:#FDA4AF;--tag-star-bg:rgba(253,164,175,.12);
+    color-scheme:dark;
+  }
+}
+/* ===== Tokens: dark (manual) ===== */
+:root[data-theme="dark"]{
+  --bg-1:#0B0E1E; --bg-2:#120F26;
+  --blob-a:rgba(56,189,248,.16); --blob-b:rgba(139,92,246,.20); --blob-c:rgba(34,211,238,.10);
+  --card:rgba(26,30,56,.62); --card-strong:rgba(32,36,66,.92); --inset:rgba(15,18,38,.6);
+  --line:rgba(165,180,252,.12); --line-2:rgba(165,180,252,.22);
+  --ink:#EEF0FF; --ink-2:#C3C8E4; --muted:#8990B3;
+  --good:#34D399; --bad:#F87171; --warn:#FBBF24;
+  --code-bg:#070916; --code-ink:#E0E7FF;
+  --shadow:0 18px 40px -22px rgba(0,0,0,.8);
+  --tag-idea:#FCD34D; --tag-idea-bg:rgba(252,211,77,.12);
+  --tag-todo:#6EE7B7; --tag-todo-bg:rgba(110,231,183,.12);
+  --tag-q:#93C5FD;   --tag-q-bg:rgba(147,197,253,.12);
+  --tag-star:#FDA4AF;--tag-star-bg:rgba(253,164,175,.12);
+  color-scheme:dark;
+}
+/* ===== Accent themes (สีธีม) ===== */
+:root,[data-accent="indigo"]{--a1:#6366F1;--a2:#3B82F6;--a-soft:rgba(99,102,241,.12);--a-ink:#4F46E5;--bar2:#06B6D4}
+:root[data-accent="emerald"]{--a1:#10B981;--a2:#0EA5E9;--a-soft:rgba(16,185,129,.13);--a-ink:#047857;--bar2:#84CC16}
+:root[data-accent="rose"]{--a1:#EC4899;--a2:#8B5CF6;--a-soft:rgba(236,72,153,.12);--a-ink:#BE185D;--bar2:#F59E0B}
+:root[data-accent="amber"]{--a1:#F97316;--a2:#F59E0B;--a-soft:rgba(249,115,22,.13);--a-ink:#C2410C;--bar2:#EF4444}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--a-ink:color-mix(in srgb,var(--a1) 55%,white)}}
+:root[data-theme="dark"]{--a-ink:color-mix(in srgb,var(--a1) 55%,white)}
+
+/* ===== Base ===== */
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;color:var(--ink);font-family:'Noto Sans Thai',system-ui,sans-serif;font-size:15px;line-height:1.65;
+  background:linear-gradient(135deg,var(--bg-1),var(--bg-2)) fixed}
+code,pre,.mono{font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace}
+.ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.ambient i{position:absolute;border-radius:50%;filter:blur(80px)}
+.ambient i:nth-child(1){width:560px;height:560px;left:-160px;top:-180px;background:var(--blob-a)}
+.ambient i:nth-child(2){width:620px;height:620px;right:-200px;top:30%;background:var(--blob-b)}
+.ambient i:nth-child(3){width:420px;height:420px;left:35%;bottom:-200px;background:var(--blob-c)}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);
+  backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%)}
+.inset{background:var(--inset);border:1px solid var(--line);border-radius:16px}
+
+/* ===== Layout ===== */
+.shell{position:relative;display:grid;grid-template-columns:260px minmax(0,1fr);gap:18px;padding:16px;max-width:1500px;margin:0 auto}
+.sidebar{position:sticky;top:calc(16px + env(safe-area-inset-top,0px));align-self:start;padding:18px 14px;max-height:calc(100dvh - 32px);overflow-y:auto;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:10px;padding:2px 8px 14px}
+.brand-mark{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:800;background:linear-gradient(135deg,var(--a1),var(--a2));box-shadow:0 8px 18px -8px var(--a1)}
+.brand b{font-size:1.1rem;font-weight:700}
+.nav-label{font-size:.72rem;color:var(--muted);padding:12px 10px 6px}
+.nav-sep{height:1px;background:var(--line);margin:8px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;border-radius:12px;border:0;background:transparent;color:var(--ink-2);font:inherit;font-size:.92rem;text-align:left;cursor:pointer;text-decoration:none}
+.nav-item svg{flex-shrink:0;opacity:.8}
+.nav-item span.t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-item:hover{background:var(--a-soft);color:var(--ink)}
+.nav-item.active{background:linear-gradient(135deg,var(--a1),var(--a2));color:#fff;font-weight:600;box-shadow:0 10px 20px -10px var(--a1)}
+.nav-item.active svg{opacity:1}
+.pill{font-size:.68rem;padding:1px 8px;border-radius:99px;background:var(--inset);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.nav-item.active .pill{background:rgba(255,255,255,.22);border-color:transparent;color:#fff}
+.pill.done{background:rgba(16,185,129,.12);color:var(--good);border-color:transparent}
+.side-foot{margin-top:14px;padding:14px;border-radius:16px;background:var(--card-strong);border:1px solid var(--line)}
+.bar{height:8px;border-radius:99px;background:var(--a-soft);overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--a1),var(--bar2));transition:width .45s}
+.swatches{display:flex;gap:8px}
+.sw{width:24px;height:24px;border-radius:50%;border:2px solid transparent;cursor:pointer;padding:0}
+.sw[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 2px var(--card-strong) inset}
+.mode{display:flex;background:var(--inset);border:1px solid var(--line);border-radius:10px;padding:3px}
+.mode button{flex:1;border:0;background:transparent;color:var(--ink-2);font:inherit;font-size:.78rem;padding:4px 6px;border-radius:8px;cursor:pointer}
+.mode button[aria-pressed="true"]{background:var(--card-strong);color:var(--ink);font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+
+.main{min-width:0;position:relative}
+.page-head{display:flex;align-items:flex-start;gap:14px;padding:6px 4px 16px}
+.page-head h1{margin:0;font-size:clamp(1.35rem,2.4vw,1.8rem);line-height:1.3;font-weight:800;letter-spacing:-.01em}
+.page-head p{margin:2px 0 0;color:var(--ink-2);font-size:.9rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:12px;padding:8px 14px;font:inherit;font-size:.88rem;font-weight:600;cursor:pointer;border:1px solid transparent;white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,var(--a1),var(--a2));color:#fff;box-shadow:0 10px 20px -10px var(--a1)}
+.btn-primary:hover{filter:brightness(1.06)}
+.btn-soft{background:var(--card-strong);border-color:var(--line);color:var(--ink)}
+.btn-soft:hover{border-color:var(--a1)}
+.btn-danger{background:var(--bad);color:#fff}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.icon-btn{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:var(--card-strong);color:var(--ink-2);cursor:pointer}
+
+.cols{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px;align-items:start}
+.right{display:flex;flex-direction:column;gap:18px;position:sticky;top:calc(16px + env(safe-area-inset-top,0px))}
+@media (max-width:1180px){.cols{grid-template-columns:minmax(0,1fr)}.right{position:static}}
+@media (max-width:860px){
+  .shell{grid-template-columns:minmax(0,1fr);padding:10px}
+  .sidebar{position:fixed;left:10px;top:calc(10px + env(safe-area-inset-top,0px));bottom:calc(10px + env(safe-area-inset-bottom,0px));width:280px;max-height:none;z-index:50;transform:translateX(-120%);transition:transform .25s ease}
+  .sidebar.open{transform:none}
+  .menu-btn{display:inline-grid!important}
+}
+.menu-btn{display:none}
+.fab{display:none;position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:30;border-radius:99px;padding:11px 18px}
+@media (max-width:1180px){.fab{display:inline-flex}}
+.scrim{position:fixed;inset:0;background:rgba(10,12,30,.4);z-index:45;display:none}
+.scrim.open{display:block}
+
+/* ===== Content card ===== */
+.sec{padding:24px 24px 20px}
+@media (max-width:640px){.sec{padding:18px 14px}}
+.sec h2{margin:0 0 4px;font-size:1.12rem;font-weight:700}
+.sec .desc{color:var(--ink-2);font-size:.9rem;margin:0 0 14px}
+.analogy{display:flex;gap:12px;padding:14px 16px;border-radius:16px;background:linear-gradient(135deg,var(--a-soft),transparent);border:1px solid var(--line-2);margin:4px 0 8px}
+.analogy .ic{width:34px;height:34px;flex-shrink:0;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--a1),var(--a2));color:#fff}
+.analogy b{color:var(--a-ink)}
+.prose p{margin:10px 0}
+.prose ol,.prose ul{margin:8px 0;padding-left:1.4em}
+.prose li{margin:4px 0}
+.prose h3{font-size:.98rem;font-weight:700;margin:20px 0 6px}
+.prose code:not(pre code){background:var(--a-soft);color:var(--a-ink);padding:1px 6px;border-radius:6px;font-size:.84em}
+.gloss{padding:14px 14px 6px;margin:14px 0}
+.gloss-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 2px 6px}
+.gloss-h b{font-size:.94rem}
+.gloss-h span{font-size:.75rem;color:var(--muted)}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th{font-size:.74rem;color:var(--muted);font-weight:500;text-align:left;padding:6px 10px}
+td{padding:9px 10px;border-top:1px solid var(--line);vertical-align:top}
+td.term{white-space:nowrap;font-weight:600;width:1%}
+td.term .en{font-family:'JetBrains Mono',monospace;font-size:.82rem}
+pre.code{position:relative;margin:12px 0;background:var(--code-bg);color:var(--code-ink);padding:16px 16px 36px;border-radius:14px;overflow-x:auto;font-size:.8rem;line-height:1.65}
+pre.code .lang{position:absolute;top:8px;right:12px;font-size:.66rem;opacity:.5}
+pre.code .copy{position:absolute;bottom:8px;right:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:var(--code-ink);border-radius:8px;padding:2px 10px;font-size:.72rem;cursor:pointer;font-family:inherit}
+.checklist{list-style:none;padding:0;margin:10px 0}
+.checklist li{display:flex;gap:10px;padding:8px 2px;border-top:1px solid var(--line)}
+.checklist li:first-child{border-top:0}
+.checklist li::before{content:"";width:16px;height:16px;border-radius:5px;border:2px solid var(--a1);flex-shrink:0;margin-top:4px}
+.summary-table td:first-child{font-weight:700;color:var(--a-ink)}
+.sec-foot{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
+
+/* ===== Right: stats + notes ===== */
+.stat-row{margin:12px 0}
+.stat-row .top{display:flex;justify-content:space-between;font-weight:600;font-size:.92rem;margin-bottom:6px}
+.stat-row .sub{font-size:.76rem;color:var(--muted);margin-top:4px}
+.stat-row .sub b.bad{color:var(--bad)} .stat-row .sub b.good{color:var(--good)}
+.field{width:100%;background:var(--card-strong);border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:9px 12px;font:inherit;font-size:.9rem;outline:0}
+.field:focus{border-color:var(--a1);box-shadow:0 0 0 3px var(--a-soft)}
+textarea.field{resize:vertical;min-height:96px;line-height:1.6}
+select.field{appearance:auto}
+label.l{display:block;font-size:.76rem;color:var(--ink-2);font-weight:600;margin:10px 0 5px}
+.seg{display:flex;background:var(--inset);border:1px solid var(--line);border-radius:12px;padding:3px;gap:2px}
+.seg button{flex:1;border:0;background:transparent;color:var(--ink-2);font:inherit;font-size:.8rem;padding:5px 8px;border-radius:9px;cursor:pointer;white-space:nowrap}
+.seg button.on{background:var(--card-strong);color:var(--ink);font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:transparent;color:var(--ink-2);font:inherit;font-size:.76rem;padding:2px 10px;border-radius:99px;cursor:pointer}
+.chip.on{border-color:var(--a1);background:var(--a-soft);color:var(--a-ink);font-weight:600}
+.note{padding:12px 2px;border-top:1px solid var(--line)}
+.note:first-child{border-top:0}
+.note.done .n-title,.note.done .n-text{text-decoration:line-through;opacity:.55}
+.n-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:.72rem}
+.tag{padding:1px 8px;border-radius:99px;font-weight:600}
+.tag.idea{background:var(--tag-idea-bg);color:var(--tag-idea)}
+.tag.todo{background:var(--tag-todo-bg);color:var(--tag-todo)}
+.tag.q{background:var(--tag-q-bg);color:var(--tag-q)}
+.tag.star{background:var(--tag-star-bg);color:var(--tag-star)}
+.step-link{border:1px solid var(--line-2);background:transparent;color:var(--ink-2);border-radius:99px;padding:0 8px;font:inherit;font-size:.72rem;cursor:pointer}
+.step-link:hover{border-color:var(--a1);color:var(--a-ink)}
+.n-title{font-weight:700;margin:6px 0 2px;word-break:break-word}
+.n-text{white-space:pre-wrap;word-break:break-word;color:var(--ink-2);font-size:.88rem;margin:0}
+.quote{border-left:3px solid var(--a1);background:var(--a-soft);padding:5px 10px;border-radius:0 10px 10px 0;margin:6px 0;font-size:.84rem;color:var(--ink-2);max-height:120px;overflow:auto}
+.n-foot{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:.72rem;color:var(--muted)}
+.n-act{display:flex;gap:2px}
+.n-act button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:.78rem;padding:3px 7px;border-radius:8px;cursor:pointer}
+.n-act button:hover{background:var(--a-soft);color:var(--a-ink)}
+.n-act button.del:hover{background:rgba(220,38,38,.1);color:var(--bad)}
+.empty{text-align:center;color:var(--muted);padding:26px 10px;font-size:.88rem}
+.empty b{display:block;color:var(--ink-2);margin-bottom:4px}
+.editor{padding:14px;margin-bottom:12px;border:1.5px solid var(--a1)}
+
+/* search results */
+.sr-row{display:grid;grid-template-columns:minmax(120px,auto) 1fr auto;gap:12px;align-items:start;padding:10px 4px;border-top:1px solid var(--line)}
+.sr-row:first-child{border-top:0}
+@media (max-width:640px){.sr-row{grid-template-columns:1fr}}
+mark{background:var(--a-soft);color:var(--a-ink);border-radius:4px;padding:0 2px}
+
+/* floating selection, modal, toast */
+#selBtn{position:fixed;z-index:60;display:none;padding:6px 12px;font-size:.8rem}
+.modal-back{position:fixed;inset:0;z-index:80;background:rgba(10,12,30,.45);display:none;align-items:center;justify-content:center;padding:18px}
+.modal-back.open{display:flex}
+.modal{width:100%;max-width:520px;padding:22px;background:var(--card-strong)}
+.modal h3{margin:0 0 8px;font-size:1.1rem}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translate(-50%,16px);opacity:0;z-index:90;background:var(--ink);color:var(--bg-1);padding:9px 18px;border-radius:12px;font-size:.88rem;transition:all .22s;pointer-events:none;max-width:90%}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+:focus-visible{outline:2px solid var(--a1);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* utility fallbacks */
+.flex{display:flex}.grid{display:grid}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.flex-1{flex:1 1 0%}.flex-wrap{flex-wrap:wrap}.min-w-0{min-width:0}.w-full{width:100%}
+.items-center{align-items:center}.justify-between{justify-content:space-between}.justify-end{justify-content:flex-end}
+.gap-1{gap:.25rem}.gap-2{gap:.5rem}.gap-3{gap:.75rem}
+.mt-1{margin-top:.25rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}
+.text-xs{font-size:.75rem;line-height:1.1rem}.text-sm{font-size:.86rem;line-height:1.35rem}
+.font-semibold{font-weight:600}.font-bold{font-weight:700}
+</style>
+</head>
+<body>
+<div class="ambient" aria-hidden="true"><i></i><i></i><i></i></div>
+
+<div class="shell">
+  <!-- ===== Sidebar ===== -->
+  <aside class="sidebar card" id="sidebar" aria-label="เมนูหลัก">
+    <div class="brand">
+      <div class="brand-mark">V</div>
+      <div><b>Vibe Guide</b><div class="text-xs" style="color:var(--muted)">คู่มือสั่ง AI สร้างเว็บ</div></div>
+    </div>
+    <input id="search" class="field" type="search" placeholder="ค้นหาศัพท์ เช่น CRUD, XSS" aria-label="ค้นหาศัพท์เทคนิค">
+    <nav id="nav" class="mt-2"></nav>
+    <div class="side-foot">
+      <div class="flex justify-between text-sm font-semibold"><span>อ่านแล้ว</span><span id="progTxt">0/9</span></div>
+      <div class="bar mt-2"><i id="progBar" style="width:0"></i></div>
+      <label class="l" style="margin-top:14px">โหมด</label>
+      <div class="mode" id="modeSeg">
+        <button data-mode="light" aria-pressed="false">☀ สว่าง</button>
+        <button data-mode="auto" aria-pressed="true">อัตโนมัติ</button>
+        <button data-mode="dark" aria-pressed="false">☾ มืด</button>
+      </div>
+      <label class="l">สีธีม</label>
+      <div class="swatches" id="swatches">
+        <button class="sw" data-accent="indigo" aria-label="ธีมคราม" title="คราม" style="background:linear-gradient(135deg,#6366F1,#3B82F6)"></button>
+        <button class="sw" data-accent="emerald" aria-label="ธีมมรกต" title="มรกต" style="background:linear-gradient(135deg,#10B981,#0EA5E9)"></button>
+        <button class="sw" data-accent="rose" aria-label="ธีมชมพู" title="ชมพู" style="background:linear-gradient(135deg,#EC4899,#8B5CF6)"></button>
+        <button class="sw" data-accent="amber" aria-label="ธีมส้ม" title="ส้ม" style="background:linear-gradient(135deg,#F97316,#F59E0B)"></button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== Main ===== -->
+  <div class="main">
+    <header class="page-head">
+      <button class="icon-btn menu-btn" id="menuBtn" aria-label="เปิดเมนู">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="flex-1 min-w-0">
+        <h1 id="pgTitle">ภาพรวม</h1>
+        <p id="pgSub"></p>
+      </div>
+      <button class="btn btn-soft" id="dataBtn" title="สำรองหรือนำเข้าโน้ต">สำรองโน้ต</button>
+    </header>
+
+    <div class="cols">
+      <div id="leftCol"></div>
+      <div class="right">
+        <section class="card sec" id="statCard"></section>
+        <section class="card sec" id="notesCard" aria-label="สมุดโน้ต">
+          <div class="flex items-center justify-between gap-2">
+            <div>
+              <h2>สมุดโน้ต</h2>
+              <div class="text-xs" style="color:var(--muted)"><span id="noteTotal">0</span> โน้ต · เก็บในเบราว์เซอร์นี้ (localStorage)</div>
+            </div>
+            <button class="btn btn-primary" id="newNoteBtn">+ โน้ตใหม่</button>
+          </div>
+          <input id="noteSearch" class="field mt-3" type="search" placeholder="ค้นหาในโน้ต" aria-label="ค้นหาในโน้ต">
+          <div class="seg mt-2">
+            <button class="on" data-scope="current" id="scopeCur">ขั้นนี้</button>
+            <button data-scope="all">ทุกขั้น</button>
+          </div>
+          <div class="chips mt-2" id="typeChips"></div>
+          <div id="editorSlot" class="mt-3"></div>
+          <div id="noteList"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<button class="btn btn-primary fab" id="fab">✎ โน้ต <span id="fabN">0</span></button>
+<button class="btn btn-primary" id="selBtn">✎ จดส่วนที่เลือก</button>
+<div class="modal-back" id="modalBack" role="dialog" aria-modal="true"><div class="modal card" id="modalBox"></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+/* ---------- content helpers ---------- */
+const A  = (html) => ({t:'analogy', html});
+const H  = (html) => ({t:'html', html});
+const G  = (title, rows, note='') => ({t:'gloss', title, rows, note});
+const C  = (lang, code) => ({t:'code', lang, code});
+const CK = (items) => ({t:'check', items});
+
+const STEPS = [
+{
+  no:'0', short:'ภาพรวม', title:'บทบาทของเราและ AI', sub:'รู้จักช่างก่อนเริ่มสร้างบ้าน',
+  blocks:[
+    A('ลองนึกภาพว่า <b>การสร้างเว็บไซต์ด้วย AI เหมือนการสร้างบ้าน</b> โดยมีช่างก่อสร้างคือ AI ซึ่งทำงานเร็วมาก ขยัน ไม่บ่น แต่มีนิสัยประจำตัว 3 อย่าง: ความจำสั้น ชอบเดา และมั่นใจเกินเหตุ'),
+    H(`<p><strong>Vibe Coding</strong> คือการเขียนโปรแกรมโดยสั่ง AI ด้วยภาษาพูด แทนการพิมพ์โค้ดเอง หน้าที่ของเราจึงไม่ใช่ช่าง แต่เป็นคนคุมช่างให้สร้างบ้านออกมาดี</p>`),
+    G('ข้อจำกัดของ AI', [
+      ['ความจำสั้น','Context Window / Stateless Session','AI จำได้เฉพาะสิ่งที่อยู่ในแชทปัจจุบัน ปิดแชทแล้วลืมหมด ถ้าแชทยาวเกินไปส่วนต้นจะเริ่มเลือน'],
+      ['ชอบเดา','Hallucination / Assumption','AI สร้างคำตอบที่ฟังดูถูกแต่ไม่มีอยู่จริง หรือตั้งสมมติฐานเองโดยไม่ถาม'],
+      ['มั่นใจเกินเหตุ','Overconfidence','รายงานว่างานเสร็จ ทั้งที่มี Bug (ข้อผิดพลาดในโปรแกรม)'],
+    ], 'three'),
+    G('บทบาทของเรา', [
+      ['Product Owner','เจ้าของผลิตภัณฑ์ ผู้ตัดสินใจว่าจะสร้างอะไร และอะไรไม่สร้าง'],
+      ['Software Architect','ผู้ออกแบบโครงสร้างระบบ ส่วนไหนเชื่อมกับส่วนไหน'],
+      ['Code Reviewer','ผู้ตรวจโค้ดก่อนยอมรับงาน'],
+    ]),
+  ]
+},
+{
+  no:'1', short:'Requirement', title:'เขียน Requirement (ความต้องการ)', sub:'คุยกับสถาปนิกก่อนสร้างบ้าน',
+  blocks:[
+    A('ก่อนสร้างบ้าน ต้องรู้ว่าใครอยู่ กี่คน กี่ห้อง ถ้าบอกช่างแค่ว่า "สร้างบ้านให้หน่อย" อาจได้คฤหาสน์ 5 ชั้น ทั้งที่ต้องการบ้านชั้นเดียวให้พ่อแม่ที่เดินขึ้นบันไดไม่ได้'),
+    G('ศัพท์ที่ควรรู้', [
+      ['Requirement','ความต้องการของระบบ'],
+      ['PRD','Product Requirements Document เอกสารรวบรวมความต้องการทั้งหมด'],
+      ['User / End User','ผู้ใช้งานระบบจริง'],
+      ['Role','บทบาทผู้ใช้ เช่น Admin, Doctor, Nurse แต่ละ Role มีสิทธิ์ต่างกัน'],
+      ['Permission','สิทธิ์ว่าใครทำอะไรได้ เช่น ดู เพิ่ม แก้ ลบ'],
+      ['Use Case','สถานการณ์การใช้งาน เช่น "พยาบาลลงนัดคนไข้ใหม่"'],
+      ['User Story','เขียนความต้องการในรูป "ในฐานะ [ใคร] ฉันต้องการ [อะไร] เพื่อ [เหตุผล]"'],
+      ['Business Rule','กฎทางธุรกิจ เช่น "หมอ 1 คนนัดซ้อนเวลาไม่ได้"'],
+      ['Edge Case','กรณีพิเศษที่มักลืม เช่น คนไข้ไม่มีเบอร์โทร'],
+      ['Scope','ขอบเขตงาน ว่าทำอะไร ไม่ทำอะไร'],
+      ['Scope Creep','อาการงานบานปลาย ฟีเจอร์เพิ่มเรื่อยๆ จนไม่เสร็จ'],
+      ['MVP','Minimum Viable Product รุ่นแรกที่เล็กที่สุดแต่ใช้งานได้จริง'],
+      ['Feature','ความสามารถหนึ่งของระบบ เช่น ระบบค้นหา'],
+    ]),
+    H(`<h3>วิธีทำ</h3><p>ไม่ต้องเขียนเอกสารเอง ให้ AI สวมบทเป็น <strong>Business Analyst (BA)</strong> แล้วสัมภาษณ์เรา เหมือนสถาปนิกนั่งคุยกับเจ้าของบ้าน</p>`),
+    C('prompt',`ผมจะสร้างระบบนัดหมายคนไข้ ให้คุณเป็น Business Analyst
+ถามผมทีละ 1 คำถาม เพื่อเก็บ Requirement ให้ครบ:
+Roles และ Permissions, Use Cases หลัก, Business Rules, Edge Cases,
+ข้อมูลที่ต้องเก็บ, Reports ที่ต้องการ
+เมื่อครบแล้ว สรุปเป็น PRD.md แบ่งเป็น MVP / Phase 2 / Out of Scope`),
+    H(`<h3>หน้าที่ของเจ้าของ: ตัดของที่ไม่จำเป็น</h3>
+<p>AI มักเสนอฟีเจอร์เยอะเกิน เช่น แจ้งเตือน LINE กราฟสวยๆ ระบบสมาชิก ให้แบ่งเป็น 3 กอง</p>
+<ol><li><strong>MVP</strong> ต้องมีตอนนี้</li><li><strong>Phase 2</strong> ทำทีหลัง</li><li><strong>Out of Scope</strong> ไม่ทำ (เขียนให้ชัด ใช้อ้างอิงเมื่อ AI พยายามเพิ่มของเอง)</li></ol>
+<p>เหมือนสร้างบ้านให้เข้าอยู่ได้ก่อน สระว่ายน้ำค่อยขุดปีหน้า</p>`),
+  ]
+},
+{
+  no:'2', short:'Context File', title:'ทำ Context File (สมุดกฎประจำโปรเจกต์)', sub:'กฎหน้าไซต์งานที่ช่างทุกคนต้องอ่าน',
+  blocks:[
+    A('สมมติช่างเปลี่ยนคนทุกวัน วันจันทร์ปูกระเบื้องสีขาว วันอังคารช่างใหม่ปูสีดำ บ้านจะออกมาเป็นผ้าปะ วิธีแก้คือ <b>เขียนสมุดกฎแปะไว้หน้าไซต์งาน</b> ให้ทุกคนอ่านก่อนเริ่มงาน'),
+    G('ศัพท์ที่ควรรู้', [
+      ['Context File / CLAUDE.md','ไฟล์กฎที่ AI อ่านก่อนทำงานทุกครั้ง'],
+      ['Markdown (.md)','ไฟล์ข้อความธรรมดาที่ใส่หัวข้อ ตัวหนา รายการได้'],
+      ['Tech Stack','ชุดเทคโนโลยีที่ใช้ เช่น PHP + MySQL + Tailwind'],
+      ['Frontend','ส่วนที่ผู้ใช้เห็นบนหน้าจอ (HTML, CSS, JavaScript)'],
+      ['Backend','ส่วนประมวลผลเบื้องหลังบน Server (PHP, Google Apps Script)'],
+      ['Framework','โครงสำเร็จรูปสำหรับสร้างโปรแกรม เช่น Laravel, React'],
+      ['Library','ชุดโค้ดสำเร็จรูปที่เรียกใช้ได้ เช่น Chart.js สำหรับวาดกราฟ'],
+      ['CDN','Content Delivery Network ลิงก์ดึง Library จากอินเทอร์เน็ต ไม่ต้องติดตั้งเอง'],
+      ['Folder Structure','การจัดวางโฟลเดอร์และไฟล์'],
+      ['Naming Convention','กฎการตั้งชื่อ เช่น camelCase (<code>patientName</code>), snake_case (<code>patient_name</code>)'],
+      ['Coding Standard','มาตรฐานการเขียนโค้ดที่ทุกไฟล์ต้องทำเหมือนกัน'],
+      ['Design System','ชุดกฎการออกแบบ สี ฟอนต์ ขนาด ปุ่ม กล่อง'],
+      ['Component','ชิ้นส่วน UI ที่ใช้ซ้ำได้ เช่น ปุ่ม การ์ด Modal (หน้าต่างป๊อปอัป)'],
+      ['UI / UX','UI คือหน้าตา, UX คือความรู้สึกและความง่ายในการใช้งาน'],
+      ['Glassmorphism','สไตล์ดีไซน์แบบกระจกฝ้า โปร่งแสง เบลอพื้นหลัง'],
+    ]),
+    H(`<h3>ตัวอย่าง CLAUDE.md</h3>`),
+    C('markdown',`## Tech Stack
+PHP 8.2, MySQL 8, Tailwind CSS (CDN), Vanilla JavaScript
+Dev: XAMPP | Production: Plesk
+
+## Folder Structure
+/config /includes /modules/{feature} /assets /api /migrations
+
+## Coding Standard
+- Database: ใช้ PDO + Prepared Statement เท่านั้น
+- ทุก Form ต้องมี CSRF Token
+- ทุก Output ต้องผ่าน htmlspecialchars() (กัน XSS)
+- Password ใช้ password_hash()
+
+## Naming Convention
+ตัวแปร/ฟังก์ชัน: camelCase | ตาราง/คอลัมน์: snake_case
+
+## Design System
+Glassmorphism: bg-white/10 backdrop-blur-xl border-white/20 rounded-2xl
+Primary Color: orange-500 | Font: Prompt
+
+## ห้ามทำ
+- ห้ามเพิ่ม Library ใหม่โดยไม่ถาม
+- ห้ามแก้ไฟล์นอก Scope ของ Task`),
+    H(`<p>คำอย่าง PDO, CSRF, XSS อธิบายไว้ในขั้นที่ 7 ทุกครั้งที่สั่งงาน ให้บอก AI ว่า <strong>"อ่าน CLAUDE.md ก่อน"</strong></p>
+<p><strong>เคล็ดลับ:</strong> เมื่อ AI ทำผิดซ้ำ ให้เพิ่มกฎทันที ไฟล์นี้จะกลายเป็น <strong>Template</strong> (แม่แบบ) ใช้กับโปรเจกต์ถัดไปได้</p>`),
+  ]
+},
+{
+  no:'3', short:'Architecture', title:'ออกแบบ Architecture และ Database Schema', sub:'ลงเสาเข็มและฐานราก',
+  blocks:[
+    A('ทาสีผนังผิด ทาใหม่ได้ในวันเดียว แต่ <b>เสาเข็มผิดตำแหน่ง ต้องทุบบ้านทิ้ง</b> ขั้นนี้จึงห้ามรีบ และเป็นจุดที่ประสบการณ์ของเรามีค่าที่สุด'),
+    G('ศัพท์ฝั่งโครงสร้างระบบ', [
+      ['Architecture','โครงสร้างภาพรวมของระบบ ส่วนไหนคุยกับส่วนไหน'],
+      ['Client','ฝั่งผู้ใช้ คือ Browser เช่น Chrome, Safari'],
+      ['Server','เครื่องที่ประมวลผลและตอบกลับ'],
+      ['Request / Response','Client ส่งคำขอ (Request) แล้ว Server ตอบกลับ (Response)'],
+      ['Route / URL','ที่อยู่ของแต่ละหน้า เช่น <code>/patients/edit?id=5</code>'],
+      ['API','Application Programming Interface ช่องทางให้โปรแกรมคุยกัน'],
+      ['HTTP Method','ประเภทคำขอ: GET (ขอดู), POST (ส่งข้อมูลใหม่), PUT/PATCH (แก้ไข), DELETE (ลบ)'],
+      ['JSON','รูปแบบข้อมูลที่ API ใช้ส่งกันไปมา'],
+    ]),
+    H(`<h3>ฐานข้อมูลคืออะไร</h3><p>นึกถึง <strong>ตู้เอกสารที่มีหลายลิ้นชัก</strong> แต่ละลิ้นชักเรียกว่า "ตาราง" เช่น ลิ้นชักคนไข้ ลิ้นชักแพทย์ ลิ้นชักนัดหมาย ใบนัดไม่ต้องเขียนชื่อคนไข้ซ้ำ แค่เขียนเลข HN แล้วไปเปิดลิ้นชักคนไข้ดู</p>`),
+    G('ศัพท์ฝั่งฐานข้อมูล', [
+      ['Database (DB)','ตู้เก็บข้อมูลทั้งหมด'],
+      ['DBMS','โปรแกรมจัดการฐานข้อมูล เช่น MySQL, MariaDB, PostgreSQL'],
+      ['Table','ลิ้นชักแต่ละใบ เช่น ตาราง <code>patients</code>, <code>doctors</code>'],
+      ['Row / Record','ข้อมูล 1 รายการ เช่น คนไข้ 1 คน'],
+      ['Column / Field','หัวข้อข้อมูล เช่น ชื่อ เบอร์โทร'],
+      ['Schema','แบบแปลนของฐานข้อมูล มีตารางอะไร คอลัมน์อะไร'],
+      ['ERD','Entity Relationship Diagram แผนภาพแสดงตารางและความสัมพันธ์'],
+      ['Primary Key (PK)','รหัสเฉพาะที่ไม่ซ้ำของแต่ละแถว เช่น <code>id</code>'],
+      ['Foreign Key (FK)','คอลัมน์ที่อ้างอิงไปยังตารางอื่น เช่น ใบนัดเก็บ <code>patient_id</code>'],
+      ['Relationship','ความสัมพันธ์: 1:1, 1:N (คนไข้ 1 คนมีหลายนัด), N:M (หลายต่อหลาย)'],
+      ['Normalization','การออกแบบไม่ให้ข้อมูลซ้ำซ้อน'],
+      ['Index','สารบัญของตาราง ทำให้ค้นหาเร็วขึ้นมาก'],
+      ['Data Type','ชนิดข้อมูล: INT, VARCHAR, DECIMAL (เงิน), DATE/DATETIME, ENUM'],
+      ['SQL','ภาษาสั่งฐานข้อมูล เช่น SELECT, INSERT, UPDATE, DELETE'],
+      ['CRUD','4 การกระทำพื้นฐาน: Create สร้าง, Read อ่าน, Update แก้, Delete ลบ'],
+      ['Soft Delete','ลบแบบซ่อน (ใส่ <code>deleted_at</code>) กู้คืนได้'],
+      ['Hard Delete','ลบทิ้งถาวร'],
+      ['Audit Trail / Audit Log','บันทึกว่าใครทำอะไร เมื่อไหร่ (<code>created_by</code>, <code>updated_at</code>)'],
+      ['utf8mb4','การเข้ารหัสตัวอักษรที่รองรับภาษาไทยและ Emoji ครบ'],
+    ]),
+    H(`<h3>วิธีสั่ง</h3>`),
+    C('prompt',`อ่าน PRD.md และ CLAUDE.md
+ออกแบบเฉพาะ Architecture ยังไม่ต้องเขียนโค้ด:
+1. ERD (Mermaid diagram)
+2. CREATE TABLE ทุกตาราง พร้อม PK, FK, Index, utf8mb4
+3. Route list: URL, HTTP Method, Role ที่เข้าได้
+4. ระบุ Assumptions ที่คุณตั้งเอง`),
+    H(`<h3>Checklist ตรวจ Schema</h3>`),
+    CK([
+      'ผ่าน Normalization ไม่มีข้อมูลซ้ำที่อาจไม่ตรงกัน',
+      'มีคอลัมน์ Audit Trail ครบ: created_at, updated_at, created_by',
+      'ตัดสินใจเรื่อง Soft Delete ตั้งแต่แรก',
+      'เงินใช้ DECIMAL ไม่ใช่ FLOAT (FLOAT คำนวณเศษทศนิยมเพี้ยน)',
+      'คอลัมน์ที่ค้นหาบ่อยมี Index',
+      'ถามต่อ: ถ้าอนาคตเป็น Multi-tenant (หลายองค์กรใช้ระบบเดียวกัน) ต้องแก้อะไร',
+    ]),
+  ]
+},
+{
+  no:'4', short:'Vertical Slice', title:'สร้างแบบ Vertical Slice ทีละ Feature', sub:'สร้างทีละห้องให้เข้าอยู่ได้จริง',
+  blocks:[
+    A('วิธีที่ไม่ดี: เทพื้นทุกห้อง ก่อผนังทุกห้อง เดินไฟทุกห้อง แล้วค่อยทาสี มีปัญหาก็รู้ตอนท้ายสุด <b>วิธีที่ดี: ทำห้องนอนให้เข้าอยู่ได้ 1 ห้องก่อน</b> แล้วค่อยทำห้องครัว'),
+    H(`<p>เว็บมี 3 ชั้น คล้ายร้านอาหาร: <strong>หน้าร้าน (Frontend)</strong> สิ่งที่ผู้ใช้เห็น, <strong>ครัว (Backend)</strong> ทำงานเบื้องหลัง, <strong>คลังสินค้า (Database)</strong> ที่เก็บข้อมูล "ทำทีละชิ้น" หมายถึงทำ Feature เดียวให้ครบทั้ง 3 ชั้น</p>`),
+    G('ศัพท์ที่ควรรู้', [
+      ['Layer','ชั้นของระบบ: Presentation (UI), Business Logic, Data (Database)'],
+      ['Horizontal Development','ทำทีละชั้นทั้งระบบ ไม่แนะนำ'],
+      ['Vertical Slice','ทำ 1 Feature ให้ครบทุกชั้น ใช้งานได้จริง แล้วค่อยทำถัดไป'],
+      ['Iteration','รอบการพัฒนาแต่ละรอบ'],
+      ['Incremental Development','พัฒนาทีละส่วนเพิ่มขึ้นเรื่อยๆ'],
+      ['Boilerplate','โค้ดพื้นฐานที่ต้องเขียนซ้ำทุกโปรเจกต์ (AI ทำได้ดีมาก)'],
+      ['Skeleton / Scaffold','โครงเริ่มต้นของโปรเจกต์'],
+      ['Layout','โครงหน้าหลัก เช่น Header, Sidebar, Footer'],
+      ['Authentication (AuthN)','การยืนยันตัวตน "คุณคือใคร" เช่น Login'],
+      ['Authorization (AuthZ)','การตรวจสิทธิ์ "คุณทำสิ่งนี้ได้ไหม"'],
+      ['Session','การจำว่าผู้ใช้ Login อยู่ ระหว่างเปลี่ยนหน้า'],
+      ['Middleware / Guard','ด่านตรวจก่อนเข้าหน้า เช่น ไม่ Login ห้ามเข้า'],
+      ['Reference Pattern','ตัวอย่างต้นแบบที่ให้ AI เลียนแบบ'],
+      ['Module','กลุ่มไฟล์ของ 1 Feature เช่น <code>modules/patients/</code>'],
+      ['Dashboard','หน้าสรุปภาพรวม ตัวเลข กราฟ'],
+      ['Pagination','การแบ่งหน้าแสดงผล เช่น หน้าละ 20 รายการ'],
+    ]),
+    H(`<h3>ลำดับที่แนะนำ</h3>
+<ol>
+<li><strong>Skeleton</strong>: Layout, Config, Database Connection, Components พื้นฐาน</li>
+<li><strong>Authentication + Authorization</strong>: Login, Logout, Session, Role Guard (ทุกห้องต้องมีกุญแจ)</li>
+<li><strong>CRUD ต้นแบบ 1 Module</strong> ทำให้ดีที่สุด ใช้เป็น Reference Pattern</li>
+<li><strong>CRUD Module อื่นๆ</strong>: สั่ง "ทำตาม Pattern ของ modules/patients/"</li>
+<li><strong>Business Logic</strong>: Workflow, Approval Flow, การคำนวณ</li>
+<li><strong>Dashboard + Reports</strong></li>
+<li><strong>Integration</strong>: Export Excel, LINE Notify</li>
+</ol>
+<p><strong>ขนาด Task ที่เหมาะ:</strong> แก้ไม่เกิน 3-5 ไฟล์, Review ได้ใน 5-10 นาที, ทดสอบด้วยมือได้ทันที</p>`),
+  ]
+},
+{
+  no:'5', short:'Prompt', title:'เขียน Prompt แบบมี Template', sub:'ใบสั่งงานที่ช่างไม่ต้องเดา',
+  blocks:[
+    A('บอกช่างว่า "ทำห้องน้ำให้หน่อย" จะได้ห้องน้ำตามใจช่าง แต่ถ้าบอกว่า "ห้องน้ำชั้นล่าง 2x2 เมตร กระเบื้องกันลื่น มีราวจับ ห้ามแตะห้องครัว เสร็จแล้วต้องเปิดน้ำไม่รั่ว" <b>จะได้ห้องน้ำที่ต้องการจริงๆ</b>'),
+    G('ศัพท์ที่ควรรู้', [
+      ['Prompt','ข้อความที่พิมพ์สั่ง AI'],
+      ['Prompt Engineering','ศาสตร์การเขียน Prompt ให้ได้ผลลัพธ์ดี'],
+      ['Prompt Template','แม่แบบ Prompt ที่ใช้ซ้ำ'],
+      ['Context','ข้อมูลพื้นหลังที่ AI ต้องรู้'],
+      ['Constraint','ข้อจำกัด สิ่งที่ห้ามทำ'],
+      ['Acceptance Criteria','เกณฑ์การยอมรับ นิยามว่า "เสร็จ" หมายถึงอะไร'],
+      ['Definition of Done (DoD)','รายการที่ต้องครบก่อนถือว่างานเสร็จ'],
+      ['Validation','การตรวจความถูกต้องของข้อมูลที่ผู้ใช้กรอก'],
+      ['Client-side / Server-side Validation','ตรวจที่ Browser (JS) / ตรวจที่ Server (PHP) ต้องมี Server-side เสมอ'],
+      ['Responsive Design','หน้าเว็บปรับตามขนาดจอ มือถือ แท็บเล็ต คอมพิวเตอร์'],
+      ['Breakpoint','ขนาดจอที่ Layout เปลี่ยน เช่น 375px, 768px'],
+      ['Plan Mode','ให้ AI วางแผนก่อน ยังไม่ลงมือเขียนโค้ด'],
+      ['Role Prompting','ให้ AI สวมบทบาท เช่น "คุณคือ Security Auditor"'],
+      ['Few-shot','ให้ตัวอย่างใน Prompt เพื่อให้ AI ทำตาม'],
+    ]),
+    H(`<h3>Prompt Template</h3><p>5 ส่วน: <strong>Context</strong> อ่านอะไรก่อน, <strong>Task</strong> ทำอะไร, <strong>Constraints</strong> ห้ามทำอะไร, <strong>Acceptance Criteria</strong> แบบไหนถึงผ่าน (สำคัญที่สุด), <strong>Output</strong> ให้รายงานอะไรกลับมา</p>`),
+    C('prompt',`[Context]
+อ่าน CLAUDE.md และใช้ modules/patients/ เป็น Reference Pattern
+
+[Task]
+สร้าง Module appointments (CRUD)
+
+[Constraints]
+- สร้าง/แก้เฉพาะใน modules/appointments/ และเพิ่มเมนูใน includes/sidebar.php
+- ห้ามแก้ Database Schema
+- ห้ามเพิ่ม Library ใหม่
+
+[Acceptance Criteria]
+1. Role doctor เห็นเฉพาะนัดของตัวเอง, Role admin เห็นทั้งหมด
+2. นัดซ้อนเวลาของแพทย์คนเดียวกันไม่ได้ (Server-side Validation)
+3. ค้นหาตาม HN / ชื่อ / วันที่ได้ มี Pagination 20 รายการ
+4. Responsive ที่ Breakpoint 375px
+
+[Output]
+- รายชื่อไฟล์ที่สร้าง/แก้ไข
+- สรุปการเปลี่ยนแปลง
+- Test Steps ทีละขั้น`),
+    H(`<p><strong>เทคนิค Plan Mode:</strong> งานซับซ้อนให้สั่ง "วางแผนก่อน ยังไม่ต้องเขียนโค้ด" แล้ว Review แผน ค่อยสั่ง "ลงมือตามแผนได้" แก้แบบบนกระดาษถูกกว่าแก้ผนังจริงเยอะ</p>`),
+  ]
+},
+{
+  no:'6', short:'Git + Review', title:'Code Review + Version Control ด้วย Git', sub:'ตรวจงานและถ่ายรูปเก็บทุกขั้น',
+  blocks:[
+    A('AI บางทีแก้ห้องน้ำ แต่แอบทุบผนังห้องครัวด้วยโดยไม่บอก <b>Git คือการถ่ายรูปบ้านเก็บไว้ทุกครั้งที่งานเสร็จ</b> ถ้าวันไหนพัง ย้อนกลับไปเหมือนในรูปล่าสุดได้ทันที'),
+    G('ศัพท์ที่ควรรู้', [
+      ['Version Control','ระบบจัดเก็บประวัติการเปลี่ยนแปลงของไฟล์'],
+      ['Git','โปรแกรม Version Control ที่นิยมที่สุด'],
+      ['Repository (Repo)','ที่เก็บโปรเจกต์พร้อมประวัติทั้งหมด'],
+      ['GitHub / GitLab','เว็บไซต์เก็บ Repo ออนไลน์'],
+      ['Commit','การบันทึกจุดเซฟ พร้อมข้อความอธิบาย'],
+      ['Conventional Commits','รูปแบบข้อความมาตรฐาน: feat: ฟีเจอร์ใหม่, fix: แก้บั๊ก, refactor: ปรับโค้ด, docs: เอกสาร'],
+      ['Branch','กิ่งแยกสำหรับทดลองโดยไม่กระทบของหลัก'],
+      ['Main / Master','Branch หลักที่เป็นโค้ดใช้งานจริง'],
+      ['Merge','รวม Branch เข้าด้วยกัน'],
+      ['Diff','แสดงความแตกต่าง บรรทัดไหนเพิ่ม (+) บรรทัดไหนลบ (-)'],
+      ['Revert / Reset','ย้อนกลับไป Commit ก่อนหน้า'],
+      ['Code Review','การตรวจโค้ดก่อนยอมรับ'],
+      ['Regression','ของเดิมที่เคยใช้ได้ กลับพังหลังแก้ส่วนอื่น'],
+      ['Debug','การหาและแก้ Bug'],
+      ['Error Message / Stack Trace','ข้อความแจ้งข้อผิดพลาด และเส้นทางว่าพังที่บรรทัดไหน'],
+      ['Console','หน้าต่างแสดง Error ของ JavaScript ใน Browser (กด F12)'],
+      ['Log','ไฟล์บันทึกเหตุการณ์และ Error ฝั่ง Server'],
+      ['Steps to Reproduce','ขั้นตอนทำซ้ำเพื่อให้เกิดปัญหาอีกครั้ง'],
+      ['Context Pollution','แชทเต็มไปด้วยความพยายามที่ผิด ทำให้ AI สับสน'],
+      ['Hardcode','ใส่ค่าตายตัวในโค้ด เช่น รหัสผ่าน ซึ่งควรอยู่ใน Config'],
+    ]),
+    H(`<h3>Workflow ต่อ 1 Task</h3>`),
+    C('bash',`git checkout -b feature/appointments   # สร้าง Branch ใหม่
+# ... สั่ง AI ทำงาน ...
+git diff                               # ดู Diff ทุกบรรทัด
+# ... ทดสอบตาม Acceptance Criteria ...
+git add .
+git commit -m "feat(appointments): add CRUD with overlap validation"`),
+    H(`<h3>Checklist ตอน Code Review</h3>`),
+    CK([
+      'มีไฟล์นอก Scope ถูกแก้ไหม',
+      'มีโค้ดเดิมถูกลบโดยไม่มีเหตุผลไหม (เสี่ยง Regression)',
+      'SQL ยังเป็น Prepared Statement ทุกจุดไหม',
+      'มี Hardcode ที่ควรอยู่ใน Config ไหม',
+      'Error Handling ครบไหม หรือแค่ try/catch เงียบๆ ที่กลืน Error หายไป',
+    ]),
+    H(`<p><strong>กฎ 3 ครั้ง:</strong> แก้ Bug เดิม 2-3 รอบไม่หาย แปลว่าเกิด Context Pollution แล้ว ให้ <code>git reset --hard</code> ย้อนกลับ เปิด Session ใหม่ และอธิบายปัญหาใหม่ให้ชัด พร้อมบอกว่าวิธีไหนลองแล้วไม่ได้ผล</p>
+<p><strong>การแจ้ง Bug ที่ดี:</strong> แนบ Error Message เต็ม, Stack Trace, ภาพจาก Console และ Steps to Reproduce อย่าพิมพ์แค่ "มันไม่ทำงาน" เหมือนไปหาหมอแล้วบอกแค่ว่าไม่สบาย</p>`),
+  ]
+},
+{
+  no:'7', short:'Hardening', title:'Hardening: ตรวจความปลอดภัยและคุณภาพ', sub:'จ้างผู้ตรวจบ้านก่อนเข้าอยู่',
+  blocks:[
+    A('ตอนสร้าง ช่างโฟกัสที่ "ทำให้เสร็จ" ก่อนเข้าอยู่ควร <b>จ้างผู้ตรวจบ้าน</b> ใช้ AI ตัวเดิม แต่เปิดแชทใหม่และใช้ Role Prompting ให้สวมบทผู้ตรวจ มันจะจับผิดได้ดีขึ้นมาก แม้แต่งานที่มันเขียนเอง'),
+    G('รอบ 1: Security (ความปลอดภัย)', [
+      ['Vulnerability','ช่องโหว่'],
+      ['OWASP Top 10','รายชื่อ 10 ช่องโหว่เว็บที่พบบ่อยที่สุด เป็นมาตรฐานสากล'],
+      ['SQL Injection (SQLi)','พิมพ์คำสั่ง SQL แทรกในช่องกรอก เพื่อขโมยหรือลบข้อมูล'],
+      ['Prepared Statement / PDO','วิธีส่งข้อมูลเข้า SQL แบบแยกส่วน ป้องกัน SQL Injection'],
+      ['XSS','Cross-Site Scripting แทรก JavaScript อันตรายให้ทำงานบนเครื่องคนอื่น'],
+      ['Output Escaping','แปลงอักขระพิเศษก่อนแสดงผล ป้องกัน XSS (<code>htmlspecialchars()</code>)'],
+      ['CSRF','Cross-Site Request Forgery หลอกผู้ใช้ที่ Login อยู่ให้ส่งคำสั่งโดยไม่รู้ตัว'],
+      ['CSRF Token','รหัสลับในแต่ละ Form ป้องกัน CSRF'],
+      ['IDOR','เปลี่ยนเลข id ใน URL แล้วเห็นข้อมูลคนอื่น อันตรายมากกับข้อมูลผู้ป่วย'],
+      ['Hashing','แปลงรหัสผ่านเป็นรหัสที่ย้อนกลับไม่ได้ (<code>password_hash()</code>)'],
+      ['Session Hijacking','ขโมย Session เพื่อสวมรอยเป็นผู้ใช้'],
+      ['File Upload Vulnerability','อัปโหลดไฟล์อันตราย เช่น .php แล้วสั่งให้ทำงานบน Server'],
+      ['Rate Limiting','จำกัดจำนวนครั้ง เช่น Login ผิด 5 ครั้งล็อก ป้องกัน Brute Force'],
+      ['PDPA','พ.ร.บ.คุ้มครองข้อมูลส่วนบุคคล สำคัญกับข้อมูลสุขภาพ'],
+    ]),
+    C('prompt',`คุณคือ Security Auditor ตรวจทั้ง Project ตาม OWASP Top 10
+เน้น SQL Injection, XSS, CSRF, IDOR, Session, File Upload, Password Storage
+รายงานเป็นตาราง: ไฟล์ | บรรทัด | ช่องโหว่ | Severity | วิธีแก้
+ยังไม่ต้องแก้โค้ด`),
+    G('รอบ 2: Performance (ความเร็ว)', [
+      ['Performance','ความเร็วและประสิทธิภาพของระบบ'],
+      ['Query','คำสั่งดึงข้อมูลจากฐานข้อมูล'],
+      ['N+1 Query Problem','ดึงรายการ 100 แถว แล้วยิง Query เพิ่มอีก 100 ครั้ง ทำให้ช้ามาก'],
+      ['JOIN','ดึงข้อมูลหลายตารางในคำสั่งเดียว (แก้ N+1)'],
+      ['Full Table Scan','ค้นทั้งตารางเพราะไม่มี Index'],
+      ['SELECT *','ดึงทุกคอลัมน์ ทั้งที่ใช้ไม่กี่คอลัมน์'],
+      ['Caching','เก็บผลลัพธ์ไว้ใช้ซ้ำ ไม่ต้องคำนวณใหม่'],
+      ['Lazy Loading','โหลดเฉพาะส่วนที่จำเป็นเมื่อต้องใช้'],
+      ['Scalability','ความสามารถรองรับผู้ใช้/ข้อมูลที่เพิ่มขึ้น'],
+    ]),
+    G('รอบ 3: UX/UI + Accessibility', [
+      ['Accessibility (a11y)','ออกแบบให้ทุกคนใช้ได้ รวมผู้พิการและผู้สูงอายุ'],
+      ['WCAG','มาตรฐานสากลด้าน Accessibility'],
+      ['Contrast Ratio','ความต่างของสีตัวอักษรกับพื้นหลัง (จุดอ่อนของ Glassmorphism)'],
+      ['Keyboard Navigation','ใช้งานด้วยคีย์บอร์ดอย่างเดียวได้'],
+      ['Loading State','สิ่งที่แสดงระหว่างรอโหลด เช่น Spinner, Skeleton'],
+      ['Empty State','สิ่งที่แสดงเมื่อไม่มีข้อมูล'],
+      ['Error State','สิ่งที่แสดงเมื่อเกิดข้อผิดพลาด'],
+      ['Toast / Alert','ข้อความแจ้งเตือนสั้นๆ ที่ป๊อปขึ้นมา'],
+    ]),
+    G('รอบ 4: Data Integrity (ความถูกต้องของข้อมูล)', [
+      ['Data Integrity','ความถูกต้องและครบถ้วนของข้อมูล'],
+      ['Transaction','กลุ่มคำสั่งที่ต้องสำเร็จทั้งหมด หรือยกเลิกทั้งหมด'],
+      ['ACID','คุณสมบัติของ Transaction ที่ดี'],
+      ['Commit / Rollback (DB)','ยืนยัน / ยกเลิก Transaction'],
+      ['Race Condition','2 คนทำงานพร้อมกันแล้วข้อมูลชนกัน เช่น จองนัดเวลาเดียวกันพร้อมกัน'],
+      ['Concurrency','การทำงานพร้อมกันหลายผู้ใช้'],
+      ['Constraint (DB)','กฎบังคับในฐานข้อมูล เช่น UNIQUE, NOT NULL'],
+    ]),
+    H(`<p><strong>หลักสำคัญ:</strong> ให้ AI รายงานก่อน แล้วเราจัด <strong>Priority</strong> และ <strong>Severity</strong> (Critical / High / Medium / Low) เอง บางข้อเป็น <strong>False Positive</strong> (แจ้งเตือนผิด ไม่ใช่ปัญหาจริง)</p>`),
+  ]
+},
+{
+  no:'8', short:'Deploy', title:'Documentation + Deployment', sub:'ทำคู่มือบ้าน แล้วย้ายเข้าอยู่จริง',
+  blocks:[
+    A('ระหว่างสร้าง เว็บอยู่ในเครื่องเราเครื่องเดียว เหมือนบ้านตัวอย่างในโชว์รูม <b>Deploy คือการย้ายบ้านไปตั้งบนที่ดินจริง</b> ให้คนอื่นเข้าใช้ผ่านอินเทอร์เน็ตได้ตลอด 24 ชั่วโมง'),
+    G('ศัพท์ฝั่งสภาพแวดล้อม', [
+      ['Environment','สภาพแวดล้อมที่ระบบทำงาน'],
+      ['Local / Development','เครื่องของเราเอง ใช้ระหว่างพัฒนา เช่น XAMPP'],
+      ['Staging','เครื่องทดสอบที่เหมือนของจริง ก่อนขึ้นระบบจริง'],
+      ['Production (Prod)','ระบบจริงที่ผู้ใช้ใช้งาน'],
+      ['localhost','ชื่อเรียกเครื่องตัวเอง'],
+      ['Hosting','บริการเช่าพื้นที่ Server'],
+      ['Shared Hosting / VPS / Cloud','เช่าร่วมกับคนอื่น / เครื่องเสมือนของตัวเอง / คลาวด์ เช่น AWS, GCP'],
+      ['Control Panel','หน้าจอจัดการ Server เช่น Plesk, cPanel'],
+      ['Domain / Subdomain','ชื่อเว็บ เช่น bch-hospital.com / ชื่อย่อย เช่น appoint.bch-hospital.com'],
+      ['DNS','ระบบแปลงชื่อ Domain เป็นที่อยู่ Server (IP Address)'],
+    ]),
+    G('ศัพท์ฝั่งการ Deploy', [
+      ['Deploy / Deployment','การนำระบบขึ้นใช้งานจริง'],
+      ['FTP / SFTP','วิธีส่งไฟล์ขึ้น Server (SFTP ปลอดภัยกว่า)'],
+      ['SSL / TLS Certificate','ใบรับรองเข้ารหัสการเชื่อมต่อ ฟรีจาก Let\'s Encrypt'],
+      ['HTTPS','เว็บที่เข้ารหัสแล้ว (รูปกุญแจ)'],
+      ['.env','ไฟล์เก็บค่าลับ เช่น รหัส Database แยกจากโค้ด'],
+      ['.env.example','แม่แบบ .env ที่มีหัวข้อครบ แต่ไม่มีค่าจริง'],
+      ['.gitignore','รายชื่อไฟล์ที่ห้ามเข้า Git เช่น .env'],
+      ['Migration','ไฟล์ SQL เรียงลำดับ สร้าง/แก้ Schema ซ้ำได้ทุกเครื่อง'],
+      ['Seed Data','ข้อมูลตัวอย่างสำหรับทดสอบ'],
+      ['Backup / Restore','สำรองข้อมูล / กู้คืนข้อมูล'],
+      ['Cron Job','ตั้งเวลาให้ Server ทำงานอัตโนมัติ เช่น Backup ทุกตีสอง'],
+      ['File Permission','สิทธิ์อ่าน/เขียน/รันไฟล์บน Server เช่น 644, 755'],
+      ['.htaccess','ไฟล์ตั้งค่า Apache เช่น ห้ามเข้าโฟลเดอร์ config'],
+      ['Cookie Flags','HttpOnly, Secure, SameSite ตั้งค่าความปลอดภัยของ Cookie'],
+      ['Monitoring','เฝ้าดูระบบว่าล่มหรือช้าไหม'],
+      ['Downtime / Uptime','เวลาที่ระบบใช้ไม่ได้ / ใช้ได้'],
+    ]),
+    G('ศัพท์ฝั่งเอกสาร', [
+      ['README.md','เอกสารหน้าแรกของโปรเจกต์ วิธีติดตั้งและใช้งาน'],
+      ['CHANGELOG.md','บันทึกการเปลี่ยนแปลงแต่ละเวอร์ชัน'],
+      ['Semantic Versioning','ระบบเลขเวอร์ชัน MAJOR.MINOR.PATCH เช่น 1.2.3'],
+      ['API Documentation','เอกสารอธิบาย API แต่ละตัว'],
+      ['Technical Debt','หนี้ทางเทคนิค ส่วนที่ทำลวกๆ ต้องกลับมาแก้ภายหลัง'],
+      ['Maintenance','การดูแลรักษาระบบหลังใช้งานจริง'],
+      ['Refactor','ปรับปรุงโค้ดให้ดีขึ้นโดยไม่เปลี่ยนการทำงาน'],
+    ]),
+    H(`<h3>Deploy Checklist</h3>`),
+    CK([
+      'ปิด display_errors, เปิด error_log',
+      'เปลี่ยน Default Password ทั้งหมด (ห้ามใช้ admin/1234)',
+      '.env และ /config เข้าถึงจาก Browser ไม่ได้ (.htaccess หรือย้ายออกนอก public)',
+      'ติดตั้ง SSL Certificate และบังคับ HTTPS',
+      'ตั้ง Cookie Flags: HttpOnly, Secure, SameSite',
+      'ตั้ง Cron Job Backup อัตโนมัติ และทดสอบ Restore จริง 1 ครั้ง',
+      'File Permission ถูกต้อง ห้ามรัน PHP ในโฟลเดอร์ uploads',
+      'รัน Migration บน Production',
+      'ตั้ง Monitoring แจ้งเตือนเมื่อระบบล่ม',
+    ]),
+    H(`<p><strong>ปิดโปรเจกต์:</strong> บันทึก <strong>Lessons Learned</strong> ลง CLAUDE.md แล้วเก็บเป็น Template โปรเจกต์ถัดไปจะเร็วและแม่นขึ้นเรื่อยๆ</p>
+<h3>สรุปภาพรวม</h3>
+<div class="table-wrap"><table class="summary-table">
+<thead><tr><th>ขั้น</th><th>เปรียบเหมือน</th><th>ศัพท์หลัก</th><th>ใครทำหลัก</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>คุยกับสถาปนิก</td><td>PRD, MVP, Scope, User Story</td><td>เรา (AI ถาม)</td></tr>
+<tr><td>2</td><td>กฎหน้าไซต์งาน</td><td>Context File, Tech Stack, Design System</td><td>เรา</td></tr>
+<tr><td>3</td><td>ลงเสาเข็ม</td><td>Architecture, Schema, ERD, PK/FK</td><td>AI ร่าง เราตรวจ</td></tr>
+<tr><td>4</td><td>สร้างทีละห้อง</td><td>Vertical Slice, CRUD, Auth</td><td>AI</td></tr>
+<tr><td>5</td><td>ใบสั่งงาน</td><td>Prompt Template, Acceptance Criteria</td><td>เรา</td></tr>
+<tr><td>6</td><td>ตรวจงาน + ถ่ายรูป</td><td>Git, Commit, Diff, Code Review</td><td>เรา</td></tr>
+<tr><td>7</td><td>จ้างผู้ตรวจบ้าน</td><td>OWASP, SQLi, XSS, CSRF, IDOR</td><td>AI (Auditor)</td></tr>
+<tr><td>8</td><td>ย้ายเข้าบ้าน</td><td>Deploy, Production, SSL, Backup</td><td>AI ทำ เราตรวจ</td></tr>
+</tbody></table></div>
+<p><strong>หัวใจ:</strong> AI เขียนโค้ด แต่เราเป็นผู้ตัดสินใจ (Decision Maker) และผู้ตรวจงาน (Reviewer) เสมอ</p>`),
+  ]
+},
+];
+</script>
+<script>
+(() => {
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+const esc = (s='') => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const strip = html => { const d=document.createElement('div'); d.innerHTML=html; return d.textContent; };
+
+/* ---------- storage ---------- */
+const KEY = {notes:'vcguide.notes.v1', read:'vcguide.read.v1', mode:'vcguide.mode', accent:'vcguide.accent', last:'vcguide.last'};
+const mem = {}; let storageOK = true;
+const store = {
+  get(k, fb){ try{ const v=localStorage.getItem(k); return v===null?fb:JSON.parse(v); }catch(e){ storageOK=false; return k in mem?mem[k]:fb; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){ storageOK=false; mem[k]=v; } }
+};
+const TYPES = {idea:{label:'ข้อคิด',icon:'💡'}, todo:{label:'ต้องทำ',icon:'✅'}, q:{label:'คำถาม',icon:'❓'}, star:{label:'สำคัญ',icon:'⭐'}};
+let notes = store.get(KEY.notes, []); if(!Array.isArray(notes)) notes=[];
+let readSet = new Set(store.get(KEY.read, []));
+let view = 'step', current = '0', scope = 'current', typeFilter = 'all', editing = null;
+const saveNotes = () => store.set(KEY.notes, notes);
+
+/* ---------- theme: mode + accent ---------- */
+const root = document.documentElement;
+function applyMode(m){
+  if(m==='auto') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', m);
+  $$('#modeSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode===m)));
+  store.set(KEY.mode, m);
+}
+function applyAccent(a){
+  root.setAttribute('data-accent', a);
+  $$('#swatches .sw').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.accent===a)));
+  store.set(KEY.accent, a);
+}
+applyMode(store.get(KEY.mode,'auto')); applyAccent(store.get(KEY.accent,'indigo'));
+$('#modeSeg').addEventListener('click', e => { const b=e.target.closest('button'); if(b) applyMode(b.dataset.mode); });
+$('#swatches').addEventListener('click', e => { const b=e.target.closest('.sw'); if(b) applyAccent(b.dataset.accent); });
+
+/* ---------- icons ---------- */
+const ic = d => `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const ICONS = {
+  '0': ic('<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>'),
+  '1': ic('<path d="M9 4h6l1 2h3v15H5V6h3z"/><path d="M9 12h6M9 16h4"/>'),
+  '2': ic('<path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4z"/><path d="M8 9h8M8 13h5"/>'),
+  '3': ic('<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/>'),
+  '4': ic('<path d="M4 20V10l8-6 8 6v10z"/><path d="M10 20v-6h4v6"/>'),
+  '5': ic('<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/>'),
+  '6': ic('<circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="8" r="2.5"/><path d="M6 8.5v7M18 10.5c0 4-6 3-10 6"/>'),
+  '7': ic('<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="m9 12 2 2 4-4"/>'),
+  '8': ic('<path d="M12 3c3 2 5 5.5 5 9l-2 4H9l-2-4c0-3.5 2-7 5-9z"/><circle cx="12" cy="10" r="1.8"/><path d="M9 16l-2 4M15 16l2 4"/>'),
+};
+
+/* ---------- glossary index for search ---------- */
+const INDEX = [];
+STEPS.forEach(s => s.blocks.forEach(b => { if(b.t==='gloss') b.rows.forEach(r => {
+  const three = r.length===3;
+  INDEX.push({step:s.no, group:b.title, term: three ? r[1] : r[0], meaning: strip(three ? r[0]+' · '+r[2] : r[1])});
+}); }));
+const glossCount = no => STEPS.find(s=>s.no===no).blocks.filter(b=>b.t==='gloss').reduce((a,b)=>a+b.rows.length,0);
+const stepName = no => no==='0' ? 'ภาพรวม' : 'ขั้นที่ '+no;
+
+/* ---------- sidebar ---------- */
+function renderNav(){
+  const item = s => {
+    const done = readSet.has(s.no);
+    const n = notes.filter(x=>x.step===s.no).length;
+    const active = view==='step' && current===s.no;
+    const pill = done ? `<span class="pill done">อ่านแล้ว</span>` : (n ? `<span class="pill">${n} โน้ต</span>` : '');
+    return `<button class="nav-item ${active?'active':''}" data-go="${s.no}" ${active?'aria-current="page"':''}>${ICONS[s.no]}<span class="t">${s.no==='0'?'':s.no+'. '}${esc(s.short)}</span>${pill}</button>`;
+  };
+  $('#nav').innerHTML =
+    `<div class="nav-label">เริ่มต้น</div>${item(STEPS[0])}
+     <div class="nav-sep"></div><div class="nav-label">8 ขั้นตอน</div>${STEPS.slice(1).map(item).join('')}`;
+}
+$('#nav').addEventListener('click', e => { const b=e.target.closest('[data-go]'); if(b) go(b.dataset.go); });
+
+/* ---------- content ---------- */
+function renderBlock(b){
+  if(b.t==='analogy') return `<div class="analogy"><div class="ic">${ic('<path d="M4 20V10l8-6 8 6v10z"/><path d="M10 20v-6h4v6"/>')}</div><div><b>เปรียบเทียบ</b><br>${b.html}</div></div>`;
+  if(b.t==='html') return `<div class="prose">${b.html}</div>`;
+  if(b.t==='code') return `<pre class="code"><span class="lang">${esc(b.lang)}</span><code>${esc(b.code)}</code><button class="copy" type="button">คัดลอก</button></pre>`;
+  if(b.t==='check') return `<ul class="checklist">${b.items.map(i=>`<li>${esc(i)}</li>`).join('')}</ul>`;
+  if(b.t==='gloss'){
+    const three = b.rows[0].length===3;
+    const head = three ? '<th>นิสัย</th><th>ศัพท์เทคนิค</th><th>ความหมาย</th>' : '<th>ศัพท์</th><th>ความหมาย</th>';
+    const rows = b.rows.map(r => three
+      ? `<tr><td class="term">${r[0]}</td><td class="term"><span class="en">${r[1]}</span></td><td>${r[2]}</td></tr>`
+      : `<tr><td class="term"><span class="en">${r[0]}</span></td><td>${r[1]}</td></tr>`).join('');
+    return `<div class="gloss inset"><div class="gloss-h"><b>${esc(b.title)}</b><span>${b.rows.length} คำ</span></div><div class="table-wrap"><table><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div></div>`;
+  }
+  return '';
+}
+function renderStep(){
+  const s = STEPS.find(x=>x.no===current), i = STEPS.indexOf(s);
+  const prev = STEPS[i-1], next = STEPS[i+1], done = readSet.has(s.no);
+  $('#pgTitle').textContent = (s.no==='0' ? '' : `ขั้นที่ ${s.no} · `) + s.title;
+  $('#pgSub').textContent = s.sub + ' — ลากคลุมข้อความเพื่อจดลงโน้ต';
+  $('#leftCol').innerHTML = `
+    <section class="card sec" id="stepCard" data-step="${s.no}">
+      <h2>${esc(s.sub)}</h2>
+      <p class="desc">${glossCount(s.no)} ศัพท์เทคนิคในขั้นนี้</p>
+      ${s.blocks.map(renderBlock).join('')}
+      <div class="sec-foot">
+        <button class="btn btn-soft" data-nav="${prev?prev.no:''}" ${prev?'':'disabled'}>← ${prev?esc(prev.short):'ก่อนหน้า'}</button>
+        <div class="flex gap-2 flex-wrap">
+          <button class="btn btn-soft" id="readBtn">${done?'✓ อ่านแล้ว':'ทำเครื่องหมายว่าอ่านแล้ว'}</button>
+          <button class="btn btn-primary" data-nav="${next?next.no:''}" ${next?'':'disabled'}>${next?esc(next.short)+' →':'จบคู่มือ'}</button>
+        </div>
+      </div>
+    </section>`;
+  bindLeft();
+  $('#readBtn').addEventListener('click', () => toggleRead(s.no));
+}
+function hl(text, q){ const t=esc(text); if(!q) return t; const i=t.toLowerCase().indexOf(esc(q).toLowerCase()); return i<0?t:t.slice(0,i)+'<mark>'+t.slice(i,i+esc(q).length)+'</mark>'+t.slice(i+esc(q).length); }
+function renderSearch(q){
+  const ql = q.toLowerCase();
+  const hits = INDEX.filter(x => (x.term+' '+x.meaning).toLowerCase().includes(ql));
+  $('#pgTitle').textContent = `ค้นหาศัพท์ · "${q}"`;
+  $('#pgSub').textContent = `พบ ${hits.length} คำจากทั้ง 9 หมวด คลิกชื่อขั้นเพื่อไปอ่านต่อ`;
+  $('#leftCol').innerHTML = `<section class="card sec"><h2>ผลการค้นหา</h2><p class="desc">ค้นทั้งชื่อศัพท์และความหมาย</p>
+    ${hits.length ? hits.map(h => `<div class="sr-row"><div class="font-semibold mono text-sm">${hl(strip(h.term),q)}</div><div class="text-sm" style="color:var(--ink-2)">${hl(h.meaning,q)}</div><button class="step-link" data-nav="${h.step}">${stepName(h.step)} · ${esc(STEPS.find(s=>s.no===h.step).short)}</button></div>`).join('')
+      : `<div class="empty"><b>ไม่พบคำนี้</b>ลองสะกดเป็นภาษาอังกฤษ เช่น "Commit" หรือคำไทย เช่น "สิทธิ์"</div>`}</section>`;
+  bindLeft();
+}
+function bindLeft(){
+  $$('#leftCol [data-nav]').forEach(b => b.addEventListener('click', () => { if(b.dataset.nav!=='') go(b.dataset.nav); }));
+  $$('#leftCol pre.code .copy').forEach(b => b.addEventListener('click', () =>
+    copyText(b.parentElement.querySelector('code').textContent).then(ok => toast(ok?'คัดลอกโค้ดแล้ว':'คัดลอกไม่สำเร็จ ลองลากคลุมแล้วกด Ctrl+C'))));
+}
+function go(no){
+  view='step'; current=no; $('#search').value='';
+  store.set(KEY.last, no); history.replaceState(null,'','#step-'+no);
+  renderAll(); window.scrollTo({top:0}); closeMenu();
+}
+
+/* ---------- search ---------- */
+let st;
+$('#search').addEventListener('input', e => {
+  clearTimeout(st); const q=e.target.value.trim();
+  st = setTimeout(() => { if(q){ view='search'; renderSearch(q); renderNav(); } else { view='step'; renderAll(); } }, 150);
+});
+
+/* ---------- read progress ---------- */
+function toggleRead(no){
+  readSet.has(no) ? readSet.delete(no) : readSet.add(no);
+  store.set(KEY.read,[...readSet]); renderAll();
+  if(readSet.has(no)) toast(readSet.size===STEPS.length ? 'อ่านครบทุกขั้นแล้ว' : 'ทำเครื่องหมายว่าอ่านแล้ว');
+}
+function paintProgress(){
+  $('#progTxt').textContent = `${readSet.size}/${STEPS.length}`;
+  $('#progBar').style.width = Math.round(readSet.size/STEPS.length*100)+'%';
+}
+
+/* ---------- stat card (Gap-Analysis style) ---------- */
+function renderStats(){
+  const s = current;
+  const readPct = Math.round(readSet.size/STEPS.length*100);
+  const g = glossCount(s), maxG = Math.max(...STEPS.map(x=>glossCount(x.no)));
+  const mine = notes.filter(n=>n.step===s), todos = mine.filter(n=>n.type==='todo'), doneT = todos.filter(n=>n.done).length;
+  const todoPct = todos.length ? Math.round(doneT/todos.length*100) : 0;
+  const maxN = Math.max(1, ...STEPS.map(x=>notes.filter(n=>n.step===x.no).length));
+  $('#statCard').innerHTML = `
+    <h2>ความคืบหน้า</h2>
+    <div class="stat-row"><div class="top"><span>อ่านคู่มือ</span><span>${readPct}%</span></div>
+      <div class="bar"><i style="width:${readPct}%"></i></div>
+      <div class="sub">อ่านแล้ว ${readSet.size} จาก ${STEPS.length} หมวด · <b class="${readSet.size===STEPS.length?'good':'bad'}">เหลือ ${STEPS.length-readSet.size}</b></div></div>
+    <div class="stat-row"><div class="top"><span>ศัพท์ใน${stepName(s)}</span><span>${g} คำ</span></div>
+      <div class="bar"><i style="width:${Math.round(g/maxG*100)}%"></i></div>
+      <div class="sub">เทียบกับหมวดที่มีศัพท์มากที่สุด ${maxG} คำ</div></div>
+    <div class="stat-row"><div class="top"><span>งานที่ต้องทำใน${stepName(s)}</span><span>${todoPct}%</span></div>
+      <div class="bar"><i style="width:${todoPct}%"></i></div>
+      <div class="sub">${todos.length ? `เสร็จ ${doneT} จาก ${todos.length} · <b class="${doneT===todos.length?'good':'bad'}">ค้าง ${todos.length-doneT}</b>` : 'ยังไม่มีโน้ตประเภท "ต้องทำ" ในขั้นนี้'}</div></div>
+    <label class="l" style="margin-top:16px">โน้ตแต่ละหมวด</label>
+    <div>${STEPS.map(x => { const n=notes.filter(v=>v.step===x.no).length; return `
+      <button class="w-full flex items-center gap-2" data-go="${x.no}" style="background:none;border:0;padding:3px 0;cursor:pointer;color:inherit;font:inherit">
+        <span class="text-xs" style="width:72px;text-align:right;color:${x.no===s?'var(--a-ink)':'var(--muted)'};font-weight:${x.no===s?700:400}">${x.no==='0'?'ภาพรวม':'ขั้น '+x.no}</span>
+        <span class="flex-1 bar" style="height:10px;background:var(--line)"><i style="width:${n/maxN*100}%;${x.no===s?'':'opacity:.55'}"></i></span>
+        <span class="text-xs" style="width:22px;color:var(--muted)">${n}</span>
+      </button>`; }).join('')}</div>`;
+}
+$('#statCard').addEventListener('click', e => { const b=e.target.closest('[data-go]'); if(b) go(b.dataset.go); });
+
+/* ---------- notes: filters ---------- */
+$('#typeChips').innerHTML = `<button class="chip on" data-type="all">ทุกประเภท</button>` + Object.entries(TYPES).map(([k,v])=>`<button class="chip" data-type="${k}">${v.icon} ${v.label}</button>`).join('');
+$('#typeChips').addEventListener('click', e => { const b=e.target.closest('.chip'); if(!b) return; typeFilter=b.dataset.type; $$('#typeChips .chip').forEach(x=>x.classList.toggle('on',x===b)); renderNotes(); });
+$$('#notesCard .seg button').forEach(b => b.addEventListener('click', () => { scope=b.dataset.scope; $$('#notesCard .seg button').forEach(x=>x.classList.toggle('on',x===b)); renderNotes(); }));
+$('#noteSearch').addEventListener('input', renderNotes);
+
+/* ---------- notes: Create / Update ---------- */
+function openEditor(init={}){
+  const ex = init.id ? notes.find(n=>n.id===init.id) : null;
+  editing = ex ? {...ex} : {id:null, step:init.step||current, type:'idea', title:'', body:'', quote:init.quote||''};
+  renderEditor();
+  $('#notesCard').scrollIntoView({block:'start', behavior:'smooth'});
+  setTimeout(()=>$('#edTitle')?.focus({preventScroll:true}), 250);
+}
+function renderEditor(){
+  if(!editing){ $('#editorSlot').innerHTML=''; return; }
+  const e = editing;
+  $('#editorSlot').innerHTML = `<form class="editor inset" id="edForm" autocomplete="off">
+    <div class="flex justify-between items-center"><b>${e.id?'แก้ไขโน้ต':'โน้ตใหม่'}</b><span class="text-xs" style="color:var(--muted)">Ctrl + Enter บันทึก</span></div>
+    <div class="grid grid-cols-2 gap-2">
+      <div><label class="l" for="edStep">หมวด</label><select id="edStep" class="field">${STEPS.map(s=>`<option value="${s.no}" ${s.no===e.step?'selected':''}>${stepName(s.no)}: ${esc(s.short)}</option>`).join('')}</select></div>
+      <div><label class="l" for="edType">ประเภท</label><select id="edType" class="field">${Object.entries(TYPES).map(([k,v])=>`<option value="${k}" ${k===e.type?'selected':''}>${v.icon} ${v.label}</option>`).join('')}</select></div>
+    </div>
+    ${e.quote?`<label class="l">ข้อความอ้างอิง</label><div class="quote">${esc(e.quote)}</div><button type="button" id="edRmQ" class="text-xs" style="background:none;border:0;color:var(--muted);cursor:pointer;text-decoration:underline;padding:0">นำข้อความอ้างอิงออก</button>`:''}
+    <label class="l" for="edTitle">หัวข้อ</label><input id="edTitle" class="field" maxlength="120" value="${esc(e.title)}" placeholder="เช่น กฎที่ต้องเพิ่มใน CLAUDE.md">
+    <label class="l" for="edBody">รายละเอียด</label><textarea id="edBody" class="field" placeholder="จดความคิด คำถาม หรือสิ่งที่จะลองทำ">${esc(e.body)}</textarea>
+    <div id="edErr" class="text-xs mt-1" style="color:var(--bad)" hidden>ใส่หัวข้อหรือรายละเอียดอย่างน้อย 1 ช่อง</div>
+    <div class="flex justify-end gap-2 mt-3"><button type="button" class="btn btn-soft" id="edCancel">ยกเลิก</button><button type="submit" class="btn btn-primary">${e.id?'บันทึกการแก้ไข':'บันทึกโน้ต'}</button></div>
+  </form>`;
+  $('#edForm').addEventListener('submit', ev => { ev.preventDefault(); commit(); });
+  $('#edForm').addEventListener('keydown', ev => { if((ev.ctrlKey||ev.metaKey)&&ev.key==='Enter'){ ev.preventDefault(); commit(); } if(ev.key==='Escape'){ editing=null; renderEditor(); } });
+  $('#edCancel').addEventListener('click', () => { editing=null; renderEditor(); });
+  $('#edRmQ')?.addEventListener('click', () => { sync(); editing.quote=''; renderEditor(); });
+}
+function sync(){ editing.step=$('#edStep').value; editing.type=$('#edType').value; editing.title=$('#edTitle').value.trim(); editing.body=$('#edBody').value.trim(); }
+function commit(){
+  sync();
+  if(!editing.title && !editing.body && !editing.quote){ $('#edErr').hidden=false; $('#edTitle').focus(); return; }
+  const now = Date.now();
+  if(editing.id){ const i=notes.findIndex(n=>n.id===editing.id); if(i>-1) notes[i]={...notes[i],...editing,updatedAt:now}; toast('บันทึกการแก้ไขแล้ว'); }
+  else { notes.unshift({...editing, id:'n'+now.toString(36)+Math.random().toString(36).slice(2,6), pinned:false, done:false, createdAt:now, updatedAt:now}); toast('บันทึกโน้ตแล้ว'); }
+  saveNotes(); editing=null; renderEditor(); renderNotes(); renderNav(); renderStats();
+}
+$('#newNoteBtn').addEventListener('click', () => openEditor({}));
+
+/* ---------- notes: Read ---------- */
+const fmt = ts => new Date(ts).toLocaleString('th-TH',{day:'numeric',month:'short',year:'2-digit',hour:'2-digit',minute:'2-digit'});
+function renderNotes(){
+  $('#scopeCur').textContent = stepName(current);
+  const q = $('#noteSearch').value.trim().toLowerCase();
+  const list = notes.filter(n => (scope==='all'||n.step===current) && (typeFilter==='all'||n.type===typeFilter) && (!q||[n.title,n.body,n.quote].join(' ').toLowerCase().includes(q)))
+    .sort((a,b)=>(b.pinned-a.pinned)||(b.updatedAt-a.updatedAt));
+  $('#noteTotal').textContent = notes.length; $('#fabN').textContent = notes.length;
+  if(!list.length){
+    const f = notes.length>0;
+    $('#noteList').innerHTML = `<div class="empty"><b>${f?'ไม่พบโน้ตที่ตรงเงื่อนไข':'ยังไม่มีโน้ต'}</b>${f?'ลองเปลี่ยนตัวกรอง หรือเลือก "ทุกขั้น"':'กด "+ โน้ตใหม่" หรือลากคลุมข้อความในเนื้อหา แล้วกด "จดส่วนที่เลือก"'}</div>`;
+    return;
+  }
+  $('#noteList').innerHTML = list.map(n => { const t=TYPES[n.type]||TYPES.idea, s=STEPS.find(x=>x.no===n.step); return `
+    <article class="note ${n.done?'done':''}" data-id="${n.id}">
+      <div class="n-meta"><span class="tag ${n.type}">${t.icon} ${t.label}</span>
+        <button class="step-link" data-do="go">${stepName(n.step)}${n.step==='0'?'':' · '+esc(s?s.short:'')}</button>${n.pinned?'<span title="ปักหมุด">📌</span>':''}</div>
+      ${n.title?`<div class="n-title">${esc(n.title)}</div>`:''}
+      ${n.quote?`<div class="quote">${esc(n.quote)}</div>`:''}
+      ${n.body?`<p class="n-text">${esc(n.body)}</p>`:''}
+      <div class="n-foot"><span>${n.updatedAt!==n.createdAt?'แก้ไข ':''}${fmt(n.updatedAt)}</span>
+        <div class="n-act">${n.type==='todo'?`<button data-do="done">${n.done?'↺ ยังไม่เสร็จ':'✓ เสร็จ'}</button>`:''}
+          <button data-do="pin">${n.pinned?'ถอนหมุด':'ปักหมุด'}</button><button data-do="edit">แก้ไข</button><button data-do="del" class="del">ลบ</button></div></div>
+    </article>`; }).join('');
+}
+$('#noteList').addEventListener('click', e => {
+  const b=e.target.closest('[data-do]'); if(!b) return;
+  const n=notes.find(x=>x.id===b.closest('.note').dataset.id); if(!n) return;
+  const a=b.dataset.do;
+  if(a==='go') go(n.step);
+  if(a==='edit') openEditor({id:n.id});
+  if(a==='pin'){ n.pinned=!n.pinned; saveNotes(); renderNotes(); }
+  if(a==='done'){ n.done=!n.done; n.updatedAt=Date.now(); saveNotes(); renderNotes(); renderStats(); }
+  if(a==='del') confirmDelete(n);
+});
+
+/* ---------- notes: Delete ---------- */
+function confirmDelete(n){
+  modal(`<h3>ลบโน้ตนี้?</h3><p class="text-sm" style="color:var(--ink-2)">"${esc(n.title||n.body.slice(0,60)||n.quote.slice(0,60))}" จะถูกลบถาวร กู้คืนไม่ได้</p>
+    <div class="flex justify-end gap-2 mt-4"><button class="btn btn-soft" data-close>ยกเลิก</button><button class="btn btn-danger" id="mDel">ลบโน้ต</button></div>`);
+  $('#mDel').focus();
+  $('#mDel').addEventListener('click', () => { notes=notes.filter(x=>x.id!==n.id); saveNotes(); if(editing&&editing.id===n.id){editing=null;renderEditor();} closeModal(); renderNotes(); renderNav(); renderStats(); toast('ลบโน้ตแล้ว'); });
+}
+
+/* ---------- backup / import ---------- */
+$('#dataBtn').addEventListener('click', () => {
+  const json = JSON.stringify({app:'vcguide',version:1,exportedAt:new Date().toISOString(),notes,read:[...readSet]},null,2);
+  modal(`<h3>สำรองและนำเข้าโน้ต</h3>
+    <p class="text-sm" style="color:var(--ink-2)">โน้ตเก็บในเบราว์เซอร์นี้เท่านั้น ถ้าล้างข้อมูลเบราว์เซอร์หรือเปลี่ยนเครื่องจะหาย ดาวน์โหลดหรือคัดลอกไว้ หรือวาง JSON ที่สำรองไว้แล้วกดนำเข้า</p>
+    ${storageOK?'':'<p class="text-sm mt-2" style="color:var(--bad)">เบราว์เซอร์นี้บันทึกลง localStorage ไม่ได้ โน้ตจะหายเมื่อปิดหน้า</p>'}
+    <textarea id="mJson" class="field mono mt-3" style="min-height:170px;font-size:.74rem">${esc(json)}</textarea>
+    <div class="flex flex-wrap justify-between gap-2 mt-3">
+      <button class="btn btn-soft" id="mClear" style="color:var(--bad)">ลบโน้ตทั้งหมด</button>
+      <div class="flex flex-wrap gap-2"><button class="btn btn-soft" id="mImport">นำเข้า</button><button class="btn btn-soft" id="mCopy">คัดลอก</button><button class="btn btn-primary" id="mDl">ดาวน์โหลด .json</button></div>
+    </div><button class="btn btn-soft w-full mt-2" data-close>ปิด</button>`);
+  $('#mCopy').addEventListener('click', () => { $('#mJson').select(); copyText($('#mJson').value).then(ok=>toast(ok?'คัดลอกแล้ว':'เลือกข้อความไว้แล้ว กด Ctrl+C')); });
+  $('#mDl').addEventListener('click', () => {
+    const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([$('#mJson').value],{type:'application/json'}));
+    a.download=`vibe-guide-notes-${new Date().toISOString().slice(0,10)}.json`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  });
+  $('#mImport').addEventListener('click', () => {
+    try{
+      const d=JSON.parse($('#mJson').value), inc=Array.isArray(d)?d:d.notes; if(!Array.isArray(inc)) throw 0;
+      const valid=inc.filter(n=>n&&typeof n.id==='string'&&STEPS.some(s=>s.no===String(n.step))).map(n=>({id:n.id,step:String(n.step),type:TYPES[n.type]?n.type:'idea',title:String(n.title||'').slice(0,120),body:String(n.body||''),quote:String(n.quote||''),pinned:!!n.pinned,done:!!n.done,createdAt:+n.createdAt||Date.now(),updatedAt:+n.updatedAt||Date.now()}));
+      const ids=new Set(notes.map(n=>n.id)), add=valid.filter(n=>!ids.has(n.id));
+      notes=[...add,...notes]; saveNotes();
+      if(Array.isArray(d.read)){ d.read.forEach(r=>readSet.add(String(r))); store.set(KEY.read,[...readSet]); }
+      closeModal(); renderAll(); toast(`นำเข้า ${add.length} โน้ต${valid.length-add.length?` (ข้ามที่ซ้ำ ${valid.length-add.length})`:''}`);
+    }catch(err){ toast('ข้อมูลไม่ถูกต้อง ต้องเป็น JSON ที่ได้จากการสำรอง'); }
+  });
+  $('#mClear').addEventListener('click', () => {
+    if(!notes.length){ toast('ยังไม่มีโน้ตให้ลบ'); return; }
+    modal(`<h3>ลบโน้ตทั้งหมด ${notes.length} รายการ?</h3><p class="text-sm" style="color:var(--ink-2)">กู้คืนไม่ได้ ถ้ายังไม่ได้สำรอง ให้กดยกเลิกแล้วดาวน์โหลดก่อน</p>
+      <div class="flex justify-end gap-2 mt-4"><button class="btn btn-soft" data-close>ยกเลิก</button><button class="btn btn-danger" id="mOk">ลบทั้งหมด</button></div>`);
+    $('#mOk').addEventListener('click', () => { notes=[]; saveNotes(); editing=null; renderEditor(); closeModal(); renderAll(); toast('ลบโน้ตทั้งหมดแล้ว'); });
+  });
+});
+
+/* ---------- select text -> quote ---------- */
+const selBtn=$('#selBtn'); let selInfo=null;
+function checkSel(){
+  const sel=getSelection(), text=sel?sel.toString().trim():'';
+  if(!text||text.length<3||!sel.rangeCount){ selBtn.style.display='none'; selInfo=null; return; }
+  const r=sel.getRangeAt(0), node=r.commonAncestorContainer.nodeType===1?r.commonAncestorContainer:r.commonAncestorContainer.parentElement;
+  const card=node&&node.closest&&node.closest('#stepCard');
+  if(!card){ selBtn.style.display='none'; selInfo=null; return; }
+  const b=r.getBoundingClientRect(); selInfo={text:text.slice(0,1200), step:card.dataset.step};
+  selBtn.style.display='inline-flex';
+  selBtn.style.top=(b.top-44<10?b.bottom+8:b.top-44)+'px';
+  selBtn.style.left=Math.max(8,Math.min(innerWidth-170,b.left+b.width/2-75))+'px';
+}
+document.addEventListener('mouseup',()=>setTimeout(checkSel,10));
+document.addEventListener('touchend',()=>setTimeout(checkSel,250));
+document.addEventListener('selectionchange',()=>{ if(!getSelection().toString().trim()) selBtn.style.display='none'; });
+addEventListener('scroll',()=>{ selBtn.style.display='none'; },{passive:true});
+selBtn.addEventListener('mousedown',e=>e.preventDefault());
+selBtn.addEventListener('click',()=>{ if(!selInfo) return; openEditor({step:selInfo.step, quote:selInfo.text}); selBtn.style.display='none'; getSelection().removeAllRanges(); });
+
+/* ---------- mobile menu ---------- */
+$('#fab').addEventListener('click',()=>$('#statCard').scrollIntoView({behavior:'smooth'}));
+function closeMenu(){ $('#sidebar').classList.remove('open'); $('#scrim').classList.remove('open'); }
+$('#menuBtn').addEventListener('click',()=>{ $('#sidebar').classList.add('open'); $('#scrim').classList.add('open'); });
+$('#scrim').addEventListener('click',closeMenu);
+
+/* ---------- modal / toast / clipboard ---------- */
+function modal(h){ $('#modalBox').innerHTML=h; $('#modalBack').classList.add('open'); $$('[data-close]',$('#modalBox')).forEach(b=>b.addEventListener('click',closeModal)); }
+function closeModal(){ $('#modalBack').classList.remove('open'); }
+$('#modalBack').addEventListener('click',e=>{ if(e.target.id==='modalBack') closeModal(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeModal(); closeMenu(); } });
+let tt; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('show'),2200); }
+async function copyText(x){ try{ await navigator.clipboard.writeText(x); return true; }catch(e){} try{ const ta=document.createElement('textarea'); ta.value=x; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); const ok=document.execCommand('copy'); ta.remove(); return ok; }catch(e){ return false; } }
+
+/* ---------- init ---------- */
+function renderAll(){ if(view==='step') renderStep(); renderNav(); paintProgress(); renderStats(); renderNotes(); }
+const fromHash = (location.hash.match(/^#step-(\d)$/)||[])[1];
+const start = fromHash || store.get(KEY.last,'0');
+current = STEPS.some(s=>s.no===start) ? start : '0';
+renderAll();
+if(!storageOK) toast('บันทึกลงเบราว์เซอร์ไม่ได้ โน้ตจะหายเมื่อปิดหน้า');
+})();
+</script>
+</body>
+</html>
